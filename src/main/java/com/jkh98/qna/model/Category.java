@@ -1,29 +1,52 @@
 package com.jkh98.qna.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.UUID;
 
-public class Category {
-    private final UUID id;
+@Entity
+@Table(name = "categories")
+public class Category extends AuditModel {
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
     @NotBlank
-    private final String name;
+    @Column(unique = true)
+    @Size(min = 3, max = 100)
+    private String name;
 
-    public Category(
-            @JsonProperty("id") UUID id,
-            @JsonProperty("name") String name
-    ) {
-        this.id = id;
-        this.name = name;
-    }
+    @Column(columnDefinition = "text")
+    private String description;
 
     public UUID getId() {
         return id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -1,6 +1,0 @@
-app:
-  datasource:
-    jdbc-url:
-    username: admin
-    password: password
-    poolsize: 30

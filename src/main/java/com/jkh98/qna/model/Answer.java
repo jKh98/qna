@@ -1,48 +1,72 @@
 package com.jkh98.qna.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.util.UUID;
 
-public class Answer {
-    private final UUID id;
+@Entity
+@Table(name = "answers")
+public class Answer extends AuditModel {
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
 
-    @NotBlank
-    private final String text;
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
-    @NotBlank
-    private final UUID userId;
+    @Column(columnDefinition = "text")
+    private String text;
 
-    @NotBlank
-    private final UUID questionId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "question_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Question question;
 
-
-    public Answer(
-            @JsonProperty("id") UUID id,
-            @JsonProperty("text") String text,
-            @JsonProperty("userId") UUID userId,
-            @JsonProperty("questionId") UUID questionId
-    ) {
-        this.id = id;
-        this.text = text;
-        this.userId = userId;
-        this.questionId = questionId;
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getText() {
         return text;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public UUID getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
