@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository("postgres")
-public class UserDataAccessService implements UserDao {
+public class UserDataAccessService implements GenericDao<User> {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -21,25 +21,24 @@ public class UserDataAccessService implements UserDao {
     }
 
     @Override
-    public int insertUser(UUID id, User user) {
+    public int insert(UUID id, User user) {
         String sql = "INSERT INTO person ( id, username )  VALUES (?, ?)";
-
         return jdbcTemplate.update(sql, id, user.getUsername());
     }
 
     @Override
-    public int insertUser(User user) {
-        return UserDao.super.insertUser(user);
+    public int insert(User user) {
+        return GenericDao.super.insert(user);
     }
 
     @Override
-    public List<User> selectAllUsers() {
+    public List<User> selectAll() {
         final String sql = "SELECT id, username FROM person";
         return jdbcTemplate.query(sql, mapUserFomDb());
     }
 
     @Override
-    public Optional<User> selectUserById(UUID id) {
+    public Optional<User> selectById(UUID id) {
         final String sql = "SELECT id, username FROM person WHERE id = ?";
         List<User> users = jdbcTemplate.query(sql, mapUserFomDb(), id);
 
@@ -47,14 +46,14 @@ public class UserDataAccessService implements UserDao {
     }
 
     @Override
-    public int deleteUserById(UUID id) {
+    public int deleteById(UUID id) {
         String sql = "DELETE FROM person WHERE id = ?";
 
         return jdbcTemplate.update(sql, id);
     }
 
     @Override
-    public int updateUserById(UUID id, User user) {
+    public int updateById(UUID id, User user) {
         String sql = "UPDATE person SET username = ? WHERE id = ?";
 
         return jdbcTemplate.update(sql, user.getUsername(), id);

@@ -2,3 +2,27 @@ CREATE TABLE person (
     id UUID NOT NULL PRIMARY KEY,
     username VARCHAR(100) NOT NULL
 )
+
+CREATE TABLE category (
+    id UUID NOT NULL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+)
+
+CREATE TABLE question (
+    id UUID NOT NULL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    body TEXT NOT NULL,
+    userId UUID NOT NULL PRIMARY KEY,
+    categoryId UUID NOT NULL PRIMARY KEY,
+    FOREIGN KEY (userId) REFERENCES person(id)
+    FOREIGN KEY (categoryId) REFERENCES category(id)
+)
+
+CREATE TABLE answer (
+    id UUID NOT NULL PRIMARY KEY,
+    text TEXT NOT NULL,
+    userId UUID NOT NULL PRIMARY KEY,
+    questionId UUID NOT NULL PRIMARY KEY,
+    FOREIGN KEY (userId) REFERENCES person(id)
+    FOREIGN KEY (questionId) REFERENCES question(id)
+)

@@ -1,6 +1,6 @@
 package com.jkh98.qna.service;
 
-import com.jkh98.qna.dao.UserDao;
+import com.jkh98.qna.dao.GenericDao;
 import com.jkh98.qna.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,30 +12,30 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    private final UserDao userDao;
+    private final GenericDao<User> genericDao;
 
     @Autowired
-    public UserService(@Qualifier("postgres") UserDao userDao) {
-        this.userDao = userDao;
+    public UserService(@Qualifier("postgres") GenericDao<User> genericDao) {
+        this.genericDao = genericDao;
     }
 
     public int addUser(User user) {
-        return userDao.insertUser(user);
+        return genericDao.insert(user);
     }
 
     public List<User> getAllUsers() {
-        return userDao.selectAllUsers();
+        return genericDao.selectAll();
     }
 
     public Optional<User> getUserById(UUID id) {
-        return userDao.selectUserById(id);
+        return genericDao.selectById(id);
     }
 
     public int deleteUserById(UUID id) {
-        return userDao.deleteUserById(id);
+        return genericDao.deleteById(id);
     }
 
     public int updateUserById(UUID id, User user) {
-        return userDao.updateUserById(id, user);
+        return genericDao.updateById(id, user);
     }
 }

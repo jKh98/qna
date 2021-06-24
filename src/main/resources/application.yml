@@ -1,6 +1,6 @@
 app:
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/qna_db
+    jdbc-url:
     username: admin
     password: password
     poolsize: 30
