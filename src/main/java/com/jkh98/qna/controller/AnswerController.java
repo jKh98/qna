@@ -1,4 +1,4 @@
-package com.jkh98.qna.api;
+package com.jkh98.qna.controller;
 
 import com.jkh98.qna.exception.ResourceNotFoundException;
 import com.jkh98.qna.model.Answer;
