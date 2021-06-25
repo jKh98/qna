@@ -1,10 +1,8 @@
 package com.jkh98.qna.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -27,16 +25,14 @@ public class Question extends AuditModel {
     @Column(columnDefinition = "text")
     private String body;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Cascade({CascadeType.REFRESH, CascadeType.SAVE_UPDATE, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Cascade({CascadeType.REFRESH, CascadeType.SAVE_UPDATE, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private User user;
 
     public UUID getId() {
