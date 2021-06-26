@@ -4,6 +4,7 @@ import com.jkh98.qna.exception.ResourceNotFoundException;
 import com.jkh98.qna.model.Answer;
 import com.jkh98.qna.repository.AnswerRepository;
 import com.jkh98.qna.repository.QuestionRepository;
+import com.jkh98.qna.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,9 @@ public class AnswerController {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/questions/{questionId}/answers")
     public Page<Answer> getAnswersByQuestionId(@PathVariable UUID questionId, Pageable pageable) {
         return answerRepository.findByQuestionId(questionId, pageable);
@@ -37,6 +41,15 @@ public class AnswerController {
                     answer.setQuestion(question);
                     return answerRepository.save(answer);
                 }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+    }
+
+    @GetMapping("/users/{userId}/answers")
+    public Page<Answer> getAnswersByUser(@PathVariable UUID userId, Pageable pageable) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with id " + userId);
+        }
+
+        return answerRepository.findByUserId(userId, pageable);
     }
 
     @GetMapping("/questions/{questionId}/answers/{answerId}")
