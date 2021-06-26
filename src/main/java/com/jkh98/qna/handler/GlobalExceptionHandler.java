@@ -1,4 +1,4 @@
-package com.jkh98.qna.config;
+package com.jkh98.qna.handler;
 
 import com.jkh98.qna.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
