@@ -1,7 +1,9 @@
 package com.jkh98.qna.controller;
 
+import com.jkh98.qna.exception.ForbiddenException;
 import com.jkh98.qna.exception.ResourceNotFoundException;
 import com.jkh98.qna.model.Question;
+import com.jkh98.qna.model.User;
 import com.jkh98.qna.repository.CategoryRepository;
 import com.jkh98.qna.repository.QuestionRepository;
 import com.jkh98.qna.repository.UserRepository;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,8 +66,15 @@ public class QuestionController {
 
     @PostMapping("/categories/{categoryId}/questions")
     public Question createQuestion(@PathVariable UUID categoryId, @Valid @RequestBody Question question) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + userDetails.getUsername()));
+
+
         return categoryRepository.findById(categoryId)
                 .map(category -> {
+                    question.setUser(user);
                     question.setCategory(category);
                     return questionRepository.save(question);
                 }).orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + categoryId));
@@ -74,12 +85,22 @@ public class QuestionController {
     public Question updateQuestion(@PathVariable UUID categoryId,
                                    @PathVariable UUID questionId,
                                    @Valid @RequestBody Question questionRequest) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + userDetails.getUsername()));
+
+
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category not found with id " + questionId);
         }
 
         return questionRepository.findById(questionId)
                 .map(question -> {
+                    if (!question.getUser().equals(user)) {
+                        throw new ForbiddenException("Cannot edit question");
+                    }
+
                     question.setTitle(questionRequest.getTitle());
                     question.setBody(questionRequest.getBody());
                     return questionRepository.save(question);
@@ -90,12 +111,21 @@ public class QuestionController {
     public ResponseEntity<?> deleteQuestion(
             @PathVariable UUID categoryId,
             @PathVariable UUID questionId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + userDetails.getUsername()));
+
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category not found with id " + questionId);
         }
 
         return questionRepository.findById(questionId)
                 .map(question -> {
+                    if (!question.getUser().equals(user)) {
+                        throw new ForbiddenException("Cannot delete answer");
+                    }
+
                     questionRepository.delete(question);
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));

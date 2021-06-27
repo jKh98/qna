@@ -1,12 +1,13 @@
 package com.jkh98.qna.controller;
 
 
+import com.jkh98.qna.exception.ConflictException;
+import com.jkh98.qna.exception.ResourceNotFoundException;
 import com.jkh98.qna.model.Role;
 import com.jkh98.qna.model.User;
 import com.jkh98.qna.payload.request.LoginRequest;
 import com.jkh98.qna.payload.request.SignupRequest;
 import com.jkh98.qna.payload.response.JwtResponse;
-import com.jkh98.qna.payload.response.MessageResponse;
 import com.jkh98.qna.repository.RoleRepository;
 import com.jkh98.qna.repository.UserRepository;
 import com.jkh98.qna.service.UserDetailsImpl;
@@ -69,18 +70,13 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+            throw new ConflictException("Username is already taken!");
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+            throw new ConflictException("Email is already in use!");
         }
 
-        // Create new user's account
         User user = new User(
                 signUpRequest.getEmail(),
                 signUpRequest.getUsername(),
@@ -91,26 +87,26 @@ public class AuthController {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(Role.ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new ResourceNotFoundException("Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
                         Role adminRole = roleRepository.findByName(Role.ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new ResourceNotFoundException("Role is not found."));
                         roles.add(adminRole);
 
                         break;
                     case "mod":
                         Role modRole = roleRepository.findByName(Role.ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new ResourceNotFoundException("Role is not found."));
                         roles.add(modRole);
 
                         break;
                     default:
                         Role userRole = roleRepository.findByName(Role.ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new ResourceNotFoundException("Role is not found."));
                         roles.add(userRole);
                 }
             });
@@ -119,6 +115,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(user);
     }
 }

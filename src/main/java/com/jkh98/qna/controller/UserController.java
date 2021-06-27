@@ -42,6 +42,7 @@ public class UserController {
     @PutMapping("/users/{userId}")
     public User updateUser(@PathVariable UUID userId,
                            @Valid @RequestBody User userRequest) {
+
         return userRepository.findById(userId)
                 .map(user -> {
                     user.setEmail(userRequest.getEmail());
