@@ -1,5 +1,6 @@
 package com.jkh98.qna.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class User extends AuditModel {
     private String email;
 
     @NotBlank
+    @JsonIgnore
     private String password;
 
     @NotBlank
