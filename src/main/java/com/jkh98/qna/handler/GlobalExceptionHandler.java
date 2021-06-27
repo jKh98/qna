@@ -12,13 +12,13 @@ import java.util.HashMap;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(value = {Exception.class})
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("message", "Server Error");
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-    }
+//    @ExceptionHandler(value = {Exception.class})
+//    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+//        HashMap<String, String> map = new HashMap<>();
+//        map.put("message", "Server Error");
+//
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+//    }
 
     @ExceptionHandler(value = {ResourceNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {

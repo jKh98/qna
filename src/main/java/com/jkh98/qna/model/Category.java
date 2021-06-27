@@ -1,5 +1,8 @@
 package com.jkh98.qna.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -9,6 +12,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Category extends AuditModel {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -24,27 +30,4 @@ public class Category extends AuditModel {
     @Column(columnDefinition = "text")
     private String description;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

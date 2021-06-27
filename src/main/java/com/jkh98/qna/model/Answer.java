@@ -1,6 +1,9 @@
 package com.jkh98.qna.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
@@ -11,6 +14,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "answers")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Answer extends AuditModel {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -36,35 +42,4 @@ public class Answer extends AuditModel {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

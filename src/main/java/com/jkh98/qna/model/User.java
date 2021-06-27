@@ -1,15 +1,22 @@
 package com.jkh98.qna.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
 public class User extends AuditModel {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -18,35 +25,26 @@ public class User extends AuditModel {
     private UUID id;
 
     @NotBlank
-    @Column(unique = true)
-    @Size(min = 3, max = 32)
-    private String username;
-
-    @NotBlank
     @Email
+    @Column(unique = true)
     private String email;
 
-    public UUID getId() {
-        return id;
-    }
+    @NotBlank
+    private String password;
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    @NotBlank
+    @Column(unique = true)
+    private String username;
 
-    public String getUsername() {
-        return username;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+    public User(String email, String username, String password) {
         this.email = email;
+        this.password = password;
+        this.username = username;
     }
 }
