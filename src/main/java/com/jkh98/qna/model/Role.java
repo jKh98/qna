@@ -20,6 +20,14 @@ public class Role {
     @Column(length = 20)
     private ERole name;
 
+    /*
+     * Manually insert:
+     *
+     * INSERT INTO roles(name) VALUES('ROLE_USER');
+     * INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
+     * INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+     *
+     */
     public enum ERole {
         ROLE_USER,
         ROLE_MODERATOR,
