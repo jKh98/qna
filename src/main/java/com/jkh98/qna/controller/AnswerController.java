@@ -16,9 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/v1")
 @RestController
 public class AnswerController {
@@ -68,11 +68,8 @@ public class AnswerController {
             throw new ResourceNotFoundException("Question not found with id " + questionId);
         }
 
-        Optional<Answer> answerMaybe = answerRepository.findById(answerId);
-        if (answerMaybe.isEmpty()) {
-            throw new ResourceNotFoundException("Answer not found with id " + answerId);
-        }
-        return answerMaybe.get();
+        return answerRepository.findById(answerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answerId));
     }
 
     @PutMapping("/questions/{questionId}/answers/{answerId}")

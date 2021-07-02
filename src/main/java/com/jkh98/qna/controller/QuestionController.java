@@ -16,9 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/v1")
 @RestController
 public class QuestionController {
@@ -39,11 +39,8 @@ public class QuestionController {
 
     @GetMapping("/questions/{questionId}")
     public Question getQuestionById(@PathVariable UUID questionId) {
-        Optional<Question> questionMaybe = questionRepository.findById(questionId);
-        if (questionMaybe.isEmpty()) {
-            throw new ResourceNotFoundException("Question not found with id " + questionId);
-        }
-        return questionMaybe.get();
+        return questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
     }
 
     @GetMapping("/categories/{categoryId}/questions")
@@ -70,7 +67,6 @@ public class QuestionController {
                 .getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + userDetails.getUsername()));
-
 
         return categoryRepository.findById(categoryId)
                 .map(category -> {

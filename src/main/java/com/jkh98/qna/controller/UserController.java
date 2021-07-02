@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/v1")
 @RestController
 public class UserController {
@@ -27,11 +27,8 @@ public class UserController {
 
     @GetMapping("/users/{userId}")
     public User getUserById(@PathVariable UUID userId) {
-        Optional<User> userMaybe = userRepository.findById(userId);
-        if (userMaybe.isEmpty()) {
-            throw new ResourceNotFoundException("User not found with id " + userId);
-        }
-        return userMaybe.get();
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
     }
 
     @PostMapping("/users")

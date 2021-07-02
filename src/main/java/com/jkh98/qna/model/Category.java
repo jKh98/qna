@@ -29,5 +29,5 @@ public class Category extends AuditModel {
 
     @Column(columnDefinition = "text")
     private String description;
-
+    private String image;
 }

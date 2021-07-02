@@ -17,9 +17,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/v1")
 @RestController
 public class CategoryController {
@@ -40,11 +40,8 @@ public class CategoryController {
 
     @GetMapping("/categories/{categoryId}")
     public Category getCategoryById(@PathVariable UUID categoryId) {
-        Optional<Category> categoryMaybe = categoryRepository.findById(categoryId);
-        if (categoryMaybe.isEmpty()) {
-            throw new ResourceNotFoundException("Category not found with id " + categoryId);
-        }
-        return categoryMaybe.get();
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + categoryId));
     }
 
     @PostMapping("/categories")
@@ -80,6 +77,7 @@ public class CategoryController {
             return categoryRepository.findById(categoryId)
                     .map(category -> {
                         category.setDescription(categoryRequest.getDescription());
+                        category.setImage(categoryRequest.getImage());
                         return categoryRepository.save(category);
                     }).orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + categoryId));
         }
